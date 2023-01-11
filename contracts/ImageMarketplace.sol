@@ -80,7 +80,7 @@ contract ImageMarketplace is
         return listingFee;
     }
 
-    function setNftContract(address _nftContract) public onlyOwner {
+    function setNftContract(address _nftContract) public {
         require(_nftContract != address(0), "Invalid nft contract address");
         nftContract = _nftContract;
         nft = IERC721Upgradeable(_nftContract);
