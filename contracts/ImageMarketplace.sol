@@ -26,13 +26,8 @@ contract ImageMarketplace is
     CountersUpgradeable.Counter public _itemsSold;
     CountersUpgradeable.Counter public _itemsCancelled;
 
-    mapping(address => bool) public whitelistNFT;
-
     address public nftContract;
     IERC721Upgradeable public nft;
-
-    uint256 private listingFee;
-    uint256 private cap;
 
     struct MarketItem {
         uint256 marketItemId;
@@ -73,11 +68,6 @@ contract ImageMarketplace is
     function initialize() public initializer {
         __Ownable_init();
         __ReentrancyGuard_init();
-        listingFee = 0.045 ether;
-    }
-
-    function getListingFee() public view returns (uint256) {
-        return listingFee;
     }
 
     function setNftContract(address _nftContract) public {
@@ -100,7 +90,6 @@ contract ImageMarketplace is
         require(
             !(idToMarketItem[_tokenId].price > 0), "This NFT has already been listed"
         );
-        require(!whitelistNFT[msg.sender], "Invalid NFT contract address");
 
         _marketItemIds.increment();
         uint256 marketItemId = _marketItemIds.current();
@@ -177,10 +166,31 @@ contract ImageMarketplace is
         delete idToMarketItem[marketItemId];
     }
 
-    // function withdraw() external {
-    //     // transfer this contract's whole BNB balance to the `0x123` address
-    //     payable(address(0x123)).transfer(address(this).balance);
+    // function getAvailableNFT() public view returns(MarketItem[] memory) {
+    //     uint256 itemCount = _marketItemIds.current();
+    //     uint256 itemSold = _itemsSold.current();
+    //     uint256 itemCancelled = _itemsCancelled.current();
+
+    //     uint256 itemAvailable = itemCount - itemSold - itemCancelled;
+    //     MarketItem[] memory marketItems = new MarketItem[](itemAvailable);
+
+    //     for (uint256 i = 0; i <= itemAvailable; i++) {
+    //         MarketItem memory items = idToMarketItem[i];
+    //         marketItems[i] = items;
+    //     }
+    //     return marketItems;
     // }
+
+    function getListedNFT() public view returns(MarketItem[] memory) {
+        uint256 numberItem = _marketItemIds.current();
+        MarketItem[] memory id = new MarketItem[](numberItem);
+
+        for (uint256 i = 0; i < numberItem; i++) {
+            MarketItem memory items = idToMarketItem[i];
+            id[i] = items;
+        }
+        return id;
+    }
 
     function _authorizeUpgrade(
         address newImplementation
