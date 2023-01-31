@@ -22,7 +22,7 @@ contract ImageMarketplace is
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
-    CountersUpgradeable.Counter private _marketItemIds;
+    CountersUpgradeable.Counter public _marketItemIds;
     CountersUpgradeable.Counter public _itemsSold;
     CountersUpgradeable.Counter public _itemsCancelled;
 
@@ -182,12 +182,14 @@ contract ImageMarketplace is
     // }
 
     function getListedNFT() public view returns(MarketItem[] memory) {
-        uint256 numberItem = _marketItemIds.current();
+        uint256 numberItem = _marketItemIds.current() + 1;
         MarketItem[] memory id = new MarketItem[](numberItem);
 
         for (uint256 i = 0; i < numberItem; i++) {
-            MarketItem memory items = idToMarketItem[i];
-            id[i] = items;
+            if (idToMarketItem[i].owner != address(0)) {
+                MarketItem storage items = idToMarketItem[i];
+                id[i] = items;
+            }
         }
         return id;
     }
