@@ -87,9 +87,7 @@ contract ImageMarketplace is
         require(
             nft.ownerOf(_tokenId) == msg.sender, "You do not own this token"
         );
-        require(
-            !(idToMarketItem[_tokenId].price > 0), "This NFT has already been listed"
-        );
+        require(nft.ownerOf(_tokenId) != address(this) , "This token has already been listed");
 
         _marketItemIds.increment();
         uint256 marketItemId = _marketItemIds.current();
@@ -165,7 +163,7 @@ contract ImageMarketplace is
         // Delete NFT on marketplace after buying
         delete idToMarketItem[marketItemId];
     }
-
+    // get item not include : not sold, cancelled 
     // function getAvailableNFT() public view returns(MarketItem[] memory) {
     //     uint256 itemCount = _marketItemIds.current();
     //     uint256 itemSold = _itemsSold.current();
@@ -174,8 +172,8 @@ contract ImageMarketplace is
     //     uint256 itemAvailable = itemCount - itemSold - itemCancelled;
     //     MarketItem[] memory marketItems = new MarketItem[](itemAvailable);
 
-    //     for (uint256 i = 0; i <= itemAvailable; i++) {
-    //         MarketItem memory items = idToMarketItem[i];
+    //     for (uint256 i = 1; i <= itemAvailable; i++) {
+    //         MarketItem storage items = idToMarketItem[i];
     //         marketItems[i] = items;
     //     }
     //     return marketItems;
